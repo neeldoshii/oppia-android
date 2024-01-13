@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import javax.inject.Inject
 import org.oppia.android.R
 import org.oppia.android.app.fragment.FragmentScope
 import org.oppia.android.app.model.PoliciesFragmentArguments
@@ -12,7 +14,6 @@ import org.oppia.android.app.translation.AppLanguageResourceHandler
 import org.oppia.android.databinding.PoliciesFragmentBinding
 import org.oppia.android.util.parser.html.HtmlParser
 import org.oppia.android.util.parser.html.PolicyType
-import javax.inject.Inject
 
 /** The presenter for [PoliciesFragment]. */
 @FragmentScope
@@ -51,6 +52,13 @@ class PoliciesFragmentPresenter @Inject constructor(
     } else if (policyPage == PolicyPage.TERMS_OF_SERVICE) {
       policyDescription = resourceHandler.getStringInLocale(R.string.terms_of_service_content)
       policyWebLink = resourceHandler.getStringInLocale(R.string.terms_of_service_web_link)
+
+
+
+    }
+    if (isRtl){
+      binding.policyDescriptionTextView.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
+      binding.policyWebLinkTextView.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
     }
 
     binding.policyDescriptionTextView.text = htmlParserFactory.create(
@@ -85,5 +93,9 @@ class PoliciesFragmentPresenter @Inject constructor(
       PolicyType.TERMS_OF_SERVICE ->
         (activity as RouteToPoliciesListener).onRouteToPolicies(PolicyPage.TERMS_OF_SERVICE)
     }
+  }
+
+  private val isRtl by lazy {
+    resourceHandler.getLayoutDirection() == ViewCompat.LAYOUT_DIRECTION_RTL
   }
 }
